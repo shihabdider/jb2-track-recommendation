@@ -23,6 +23,7 @@ import {
   stateModelFactory as PluginStoreStateModelFactory,
   configSchema as PluginStoreConfigSchema,
 } from './PluginStoreWidget'
+import { MetaindexQueryRPC } from './HierarchicalTrackSelectorWidget/RecommenderRPC/rpcMethods'
 
 const SetDefaultSession = lazy(() => import('./SetDefaultSession'))
 
@@ -99,6 +100,7 @@ export default class extends Plugin {
         ),
       })
     })
+    pluginManager.addRpcMethod(() => new MetaindexQueryRPC(pluginManager))
   }
 
   configure(pluginManager: PluginManager) {}

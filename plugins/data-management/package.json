@@ -41,8 +41,9 @@
     "pluralize": "^8.0.0",
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-vtree": "^3.0.0-beta.1",
-    "react-window": "^1.8.6"
-  },
+    "react-window": "^1.8.6",
+    "@gmod/tabix": "^1.5.2"
+},
   "peerDependencies": {
     "@jbrowse/core": "^1.0.0",
     "@jbrowse/plugin-config": "^1.0.0",

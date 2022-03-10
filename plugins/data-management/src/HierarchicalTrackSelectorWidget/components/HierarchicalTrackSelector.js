@@ -16,6 +16,7 @@ import {
   InputAdornment,
   Menu,
   MenuItem,
+  Switch,
   TextField,
   Tooltip,
   Typography,
@@ -363,6 +364,34 @@ const HierarchicalTrackSelectorContainer = observer(
   },
 )
 
+const DisplayRecommendedTracks = observer(async ({ model }) => {
+  const viewedRegion = model.view.dynamicBlocks.contentBlocks
+  const { assemblyName, refName, start, end } = viewedRegion[0]
+  const viewedRegionString = `${assemblyName} ${refName}: ${start} - ${end}`
+
+  const session = getSession(model)
+  const { rpcManager } = session
+
+  const sessionId = 'tabixQuery'
+
+  const params = {
+    sessionId,
+    refName,
+    start,
+    end,
+  }
+
+  const response = await rpcManager.call(sessionId, 'MetaindexQueryRPC', params)
+
+  const tracks = response.join(',')
+
+  return (
+    <div>
+      <p>{tracks}</p>
+    </div>
+  )
+})
+
 const HierarchicalTrackSelectorHeader = observer(
   ({ model, setHeaderHeight, setAssemblyIdx, assemblyIdx }) => {
     const classes = useStyles()
@@ -375,6 +404,7 @@ const HierarchicalTrackSelectorHeader = observer(
     const [connectionToggleOpen, setConnectionToggleOpen] = useState(false)
     const { assemblyNames } = model
     const assemblyName = assemblyNames[assemblyIdx]
+    const [checked, setChecked] = useState(false)
 
     function breakConnection(connectionConf, deletingConnection) {
       const name = readConfObject(connectionConf, 'name')
@@ -395,6 +425,10 @@ const HierarchicalTrackSelectorHeader = observer(
       if (deletingConnection) {
         setDeleteDialogDetails({ name, connectionConf })
       }
+    }
+
+    function toggleTrackRecommendations(event) {
+      setChecked(event.target.checked)
     }
 
     const connectionMenuItems = [
@@ -476,7 +510,15 @@ const HierarchicalTrackSelectorHeader = observer(
             }}
           />
         </div>
-
+        <div>
+          <FormControlLabel
+            control={
+              <Switch checked={checked} onChange={toggleTrackRecommendations} />
+            }
+            label="Toggle track recommendation"
+          />
+          {checked ? <DisplayRecommendedTracks model={model} /> : null}
+        </div>
         <JBrowseMenu
           anchorEl={connectionAnchorEl}
           open={Boolean(connectionAnchorEl)}
